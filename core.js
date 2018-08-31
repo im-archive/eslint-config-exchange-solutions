@@ -11,6 +11,9 @@ module.exports = {
       args: 'none'
     }],
     'no-use-before-define': 2,
-    'vars-on-top': 0
+    'vars-on-top': 0,
+    'object-curly-newline': ['error', { multiline: true }],
+    'arrow-parens': [2, 'as-needed', { requireForBlockBody: true }],
+    'no-plusplus': [2, { allowForLoopAfterthoughts: true }]
   }
 };

@@ -1,4 +1,4 @@
-/* eslint no-console: 0, no-unused-vars: 0 */
+/* eslint no-console: 0, no-unused-vars: 0, import/no-unresolved: 0 */
 
 import $ from 'jquery';
 import _ from 'lodash';
