@@ -12,8 +12,7 @@ module.exports = {
     }],
     'no-use-before-define': 2,
     'vars-on-top': 0,
-    'object-curly-newline': ['error', { multiline: true }],
-    'arrow-parens': [2, 'as-needed', { requireForBlockBody: true }],
+    'object-curly-newline': [2, { consistent: true }],
     'no-plusplus': [2, { allowForLoopAfterthoughts: true }]
   }
 };
