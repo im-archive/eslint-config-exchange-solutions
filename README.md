@@ -57,3 +57,44 @@ const heroes = [ 'Batman', 'Superman' ];
 ```
 
 **[⬆ back to top](#table-of-contents)**
+
+## Curly braces around objects
+
+- [1](#curly-braces.1) <a name='curly-braces.1'></a> Either both curly braces or neither should directly enclose newlines.
+-- See [the eslint docs for `object-curly-newline { "consistent": true }`](https://eslint.org/docs/rules/object-curly-newline#consistent);
+
+**[⬆ back to top](#table-of-contents)**
+
+## Unary increments and decrements
+
+- [1](#plusplus.1) <a name='plusplus.1'></a> You can use `++` for loops, but otherwise use `+= 1` or `-= 1` syntax.
+
+> The Airbnb [example](https://github.com/airbnb/javascript/blob/48448a81cc899b3cbabfc13eab5b1dc432d24f7f/README.md#variables--unary-increment-decrement)
+> suggests that array methods such as `filter` and `reduce` should be used over
+> traditional loops. We agree that those options are often better. However, we
+> find value, in cases where loops are necessary, to be allowed the convenience
+> of unary increment statements for the loop declaration. Otherwise, we agree
+> with their reasoning about unary increment and decrement statements.
+
+```javascript
+// bad
+
+const array = [1, 2, 3];
+let num = 1;
+num++;
+--num;
+
+
+// good
+
+const array = [1, 2, 3];
+let num = 1;
+num += 1;
+num -= 1;
+
+for (let i = 0; i < array.length; i++) {
+  console.log(`The value at ${i} is ${array[i]}`);
+}
+```
+
+**[⬆ back to top](#table-of-contents)**

@@ -1,3 +1,4 @@
+/* eslint import/no-dynamic-require: 0, global-require: 0 */
 import path from 'path';
 import _ from 'lodash';
 import Mocha, { Test, Suite } from 'mocha';
@@ -6,15 +7,14 @@ import chaiAsPromised from 'chai-as-promised';
 import fsp from 'fs-promise';
 import { linter } from 'eslint';
 import Config from 'eslint/lib/config';
-import eslintRules from 'eslint/lib/rules';
+import Rules from 'eslint/lib/rules';
 
 chai.should();
 chai.use(chaiAsPromised);
 
-const mocha = new Mocha({
-  reporter: 'progress'
-});
+const mocha = new Mocha({ reporter: 'progress' });
 const samplesDir = path.join(__dirname, 'samples');
+const eslintRules = new Rules();
 
 function formatMessages(messages) {
   return messages.map(({ line, column, message, ruleId, severity }) => {
@@ -27,7 +27,7 @@ const sampleTests = {
   good(samplePath, config) {
     return (done) => {
       fsp.readFile(samplePath)
-        .then(contents => {
+        .then((contents) => {
           const messages = linter.verify(contents.toString(), config, samplePath);
           formatMessages(messages).should.eql([]);
         }).should.notify(done);
@@ -37,7 +37,7 @@ const sampleTests = {
   bad(samplePath, config) {
     return (done) => {
       fsp.readFile(samplePath)
-        .then(contents => {
+        .then((contents) => {
           const lines = contents.toString().trim().split('\n');
           const expectedErrors = _.takeRightWhile(lines, line => /^\/\//.test(line))
             .map(line => line.substring(2).trim());
@@ -51,14 +51,12 @@ const sampleTests = {
 
 function ruleSuiteBuilder(parentSuite, dir, config, sampleScripts) {
   const ruleSuites = sampleScripts
-    .map(sampleScript => {
+    .map((sampleScript) => {
       const split = sampleScript.split('.');
       const ruleSuiteName = split.slice(0, split.length - 2).join('.');
       const testName = split[split.length - 2];
 
-      return {
-        [ruleSuiteName]: [testName]
-      };
+      return { [ruleSuiteName]: [testName] };
     })
     .reduce((acc, x) => _.merge({}, acc, x, (array1, array2) => {
       if (_.isArray(array1)) {
@@ -68,12 +66,12 @@ function ruleSuiteBuilder(parentSuite, dir, config, sampleScripts) {
       return null;
     }), {});
 
-  Object.keys(ruleSuites).forEach(ruleSuiteName => {
+  Object.keys(ruleSuites).forEach((ruleSuiteName) => {
     const ruleSuite = Suite.create(parentSuite, ruleSuiteName);
 
     ruleSuites[ruleSuiteName]
       .filter(test => !/^x/.test(test))
-      .forEach(test => {
+      .forEach((test) => {
         const testPath = `${dir}/${ruleSuiteName}.${test}.js`;
         ruleSuite.addTest(new Test(test, sampleTests[test](testPath, config)));
       });
@@ -85,15 +83,15 @@ function suiteBuilder(dir) {
   const fullDir = path.join(samplesDir, dir);
 
   const rawConfig = require(`../${dir}`);
-  const config = new Config({ baseConfig: rawConfig }).baseConfig;
+  const config = new Config({ baseConfig: rawConfig }, linter).baseConfig;
 
-  (config.plugins || []).forEach(pluginName => {
+  (config.plugins || []).forEach((pluginName) => {
     const plugin = require(`eslint-plugin-${pluginName}`);
-    eslintRules.import(plugin.rules, pluginName);
+    eslintRules.importPlugin(plugin.rules, pluginName);
   });
 
   return fsp.readdir(fullDir)
-    .then(sampleScripts => {
+    .then((sampleScripts) => {
       ruleSuiteBuilder(suite, fullDir, config, sampleScripts);
     });
 }
@@ -105,7 +103,7 @@ fsp.readdir(samplesDir)
     mocha.run(resolve);
   }))
   .then(exitCode => process.exit(exitCode))
-  .catch(err => {
+  .catch((err) => {
     console.log(err.stack);
     process.exit(1);
   });
